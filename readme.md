@@ -32,21 +32,20 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
 
 1. Use the [WolfGreyDev/syncify-skeleton](https://github.com/WolfGreyDev/syncify-skeleton) template to create a new developer environment repository. Follow the instructions on how to install.
 
-    > [!NOTE]  
     > When creating a new repo, be sure to name it in a way you can differentiate it as the development environment. eg 'syncify-dawn-example-dev'
 
-    > [!IMPORTANT]  
     > Following the instructions on the skeleton repo will test if your connection is working with your store.
 
 2. Empty the templates path from your `package.json`.
 
     ```json
-        "templates": "template/*" -> "templates": ""
+        "paths": {
+            "templates": ""
+        }
     ```
 
 3. Fork the [Shopify/dawn](https://github.com/Shopify/dawn) repo.
 
-    > [!NOTE]  
     > This will handle any updates to dawn without interfering with your project/s source code via the sync fork function.
 
 4. Create another repo for your source code using the dawn fork as a template:
@@ -55,10 +54,8 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
     
     2. Go back and click the 'use this template' button in the top right of your repository. Create a new repository.
 
-        > [!NOTE]  
         > Be sure to name this repo in a way to differentiate it as your source code. eg 'syncify-dawn-example-source'
 
-        > [!TIP]  
         > Disable both CI and Contributor License Agreement actions in the actions tab in your new repository.
 
 5. Replace the existing dusk source with the new source repo you just created
@@ -67,7 +64,6 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
 
     2. You must commit the source removal to your development environment.
 
-        > [!CAUTION]  
         > Failure to do this will mess your development environment up! It's easier to start again than deal with undoing this. In my experience.
 
     3. Using GitHub submodules, add the source back to the development environment.
@@ -76,15 +72,12 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
 
         eg. `git submodule add git@github.com:WolfGreyDev/syncify-dawn-example-source.git source`
 
-        > [!TIP]  
         > If you're new to submodules, check out this [blog post](https://github.blog/open-source/git/working-with-submodules/) to get an understanding of what they are. Essentially a repo inside a repo.
 
     4. Be sure to commit the submodule addition in your development git.
 
-        > [!WARNING]  
         > You'll want to make sure that when a commit happens inside your submodule, you also commit the change in your development environment. That way if something goes wrong, when you go back, your submodule will go back to the equivalent commit.
 
-        > [!TIP]  
         > Though most of the time you can make a quick change back without needing to play with the commit history. (Preferred)
 
 6. Add our own esbuild config which allows production builds to not minify the syncify way.
@@ -122,20 +115,16 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
         "build": "syncify --build --prod --clean; node esbuild.mjs"
         ```
 
-        > [!NOTE]  
         > The way this works is, Syncify will run a complete production build first, including the messed up minified scripts. But immediately after, we overwrite with our legacy code safe esbuild config.
 
-        > [!IMPORTANT]  
         > Yes we a building our scripts twice. Yes it's dumb. But if dawn can exist, then this can exist. Plus it comes at very little performance cost.
 
-        > [!NOTE]  
         > You may think why not remove the scripts from the paths and only build once. If we did that, we wouldn't be able to run `pnpm dev` and have our changes pushed to the theme folder.
     
 7. Run `pnpm build` for a production build of dawn.
 
 8. Run `pnpm upload` to push the theme folder to your development theme.
 
-    > [!WARNING]  
     > WE DO NOT PUSH TO ANY LIVE THEME WITHOUT TESTING FIRST!
 
 9. In the `.liquidrc` file, you should add the `source` directory to a new `ingnore` option under `format`.
@@ -144,20 +133,16 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
     "format": {
         "ignore": [
             "./source/**/*"
-        ],
-        ...
+        ]
     }
     ```
 
-    > [!WARNING]  
     > If you do not do this and allow æsthetic to style your code, it's going to make it harder down the road to perform updates with the fork.
 
-    > [!TIP]  
     > Consider just adopting the dawn styling for these projects, we've come this far, a little more pain won't hurt... much
 
 10. Manually copy the `settings_data.json` contents from `/source/config/` and paste it into the development theme on the store via the Shopify code editor.
 
-    > [!NOTE]  
     > You'll see a warning when using the theme editor that there is a problem with the settings_data.json file as it can't find some references.
 
 11. Don't forget to commit these changes to your development environment.
@@ -214,10 +199,8 @@ Since we've make a fork of the theme, we can simply sync the fork and pull in th
 
 Using GitHub actions, specifically [actions-template-sync](https://github.com/marketplace/actions/actions-template-sync), it gives us a way to sync our two repos by creating a pull request to our source with the changes.
 
-> [!CAUTION]  
 > I have yet to get this working as I'm extremely unfamiliar with GitHub actions and seem to run into permission errors. However, I'm assured this is the way and simple to set up. Once I have a working template and instructions, I'll update this repo.
 
-> [!NOTE]  
 > I'd welcome any guidance to setting this up properly.
 
 ## Notes
