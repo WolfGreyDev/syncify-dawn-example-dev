@@ -1,0 +1,119 @@
+{
+	"engine": "shopify",
+	"files": {
+		"locales": "./theme/locales/en.default.json",
+		"sections": ["./theme/sections/*"],
+		"settings": "./source/config/settings_schema.json",
+		"snippets": ["./theme/snippets/*"]
+	},
+	"format": {
+		/*
+			Formatting and beautification is provided by Æsthetic.
+			https://aesthetic.js.org
+			Customize your formatting rules with Moloko.
+			https://moloko.js.org/
+		*/
+		"crlf": false,
+		/*
+		"correct": false,
+		"language": "liquid",
+		"indentLevel": 0,
+		*/
+		"endNewline": false,
+		"indentChar": "\t",
+		"indentSize": 1,
+		"preserveLine": 1,
+		"preset": "default",
+		"wrap": 0,
+		"wrapFraction": 0,
+		"liquid": {
+			"commentIndent": true,
+			"commentNewline": true,
+			"dedentTagList": [],
+			"delimiterPlacement": "force-multiline",
+			"delimiterTrims": "tags",
+			"forceArgument": 3,
+			"forceFilter": 3,
+			"ignoreTagList": [],
+			"indentAttribute": false,
+			"lineBreakSeparator": "after",
+			"normalizeSpacing": true,
+			"preserveComment": false,
+			"quoteConvert": "single"
+		},
+		"markup": {
+			"attributeCasing": "lowercase-name",
+			"attributeSort": [
+				"id",
+				"class"
+			],
+			"commentDelimiters": "force",
+			"commentIndent": true,
+			"commentNewline": true,
+			"delimiterTerminus": "inline",
+			"forceAttribute": true,
+			"forceIndent": true,
+			"ignoreCSS": false,
+			"ignoreJS": false,
+			"ignoreJSON": false,
+			"lineBreakValue": "preserve",
+			"preserveAttribute": false,
+			"preserveComment": false,
+			"preserveText": false,
+			"quoteConvert": "double",
+			"selfCloseSpace": true,
+			"selfCloseSVG": true,
+			"stripAttributeLines": true
+		},
+		"json": {
+			"arrayFormat": "indent",
+			"braceAllman": true,
+			"bracePadding": true,
+			"objectIndent": "indent",
+			"objectSort": true
+		},
+		"style": {
+			"atRuleSpace": true,
+			"classPadding": true,
+			"commentIndent": false,
+			"commentNewline": true,
+			"noLeadZero": false,
+			"preserveComment": false,
+			"quoteConvert": "double",
+			"sortProperties": true,
+			"sortSelectors": true
+		}
+		/*
+			NOT STABLE YET.
+			Check Æsthetic documentation for more info.
+
+			"script": {
+				"arrayFormat": "default",
+				"braceAllman": false,
+				"braceNewline": false,
+				"bracePadding": false,
+				"braceStyle": "none",
+				"caseSpace": false,
+				"commentIndent": false,
+				"commentNewline": false,
+				"elseNewline": false,
+				"endComma": "never",
+				"functionNameSpace": false,
+				"functionSpace": false,
+				"inlineReturn": true,
+				"methodChain": 4,
+				"neverFlatten": false,
+				"noCaseIndent": false,
+				"noSemicolon": false,
+				"objectIndent": "default",
+				"objectSort": false,
+				"preserveComment": false,
+				"quoteConvert": "none",
+				"styleGuide": "none",
+				"ternaryLine": false,
+				"variableList": "none",
+				"vertical": false
+			}
+		*/
+	}
+}
