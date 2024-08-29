@@ -1,3 +1,6 @@
 [submodule "source"]
 	path = source
 	url = git@github.com:WolfGreyDev/syncify-dawn-example-source.git
+[submodule "remote"]
+	path = remote
+	url = git@github.com:WolfGreyDev/syncify-dawn-example.git
