@@ -39,9 +39,9 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
 2. Empty the templates path from your `package.json`.
 
     ```json
-        "paths": {
-            "templates": ""
-        }
+    "paths": {
+        "templates": ""
+    }
     ```
 
 3. Fork the [Shopify/dawn](https://github.com/Shopify/dawn) repo.
@@ -232,11 +232,11 @@ Now we're using submodules for both source and remote repos, maintaining all thr
 
 ## Design Considerations
 
-### I have intentionally left the `settings_data.json` out of my paths in my `package.json`.
+#### I have intentionally left the `settings_data.json` out of my paths in my `package.json`.
 
 When I'm developing, the changes I make in the settings, I want to persist on the store when I do a new upload. If I were to upload a blank settings file or even the dawn default settings every time I do an upload, it makes testing new features extremely tedious.
 
-### I have removed the `templates` value from my `package.json`.
+#### I have removed the `templates` value from my `package.json`.
 
 Again this is a choice I make to ensure I don't upload an empty template and remove any settings I may have applied previously.
 
@@ -244,7 +244,7 @@ This is a double edged sword though, as I cannot easily push new templates to th
 
 When we did our first upload, we uploaded all the essential templates to get started so adding to them is very simple.
 
-### I have added `templates` and `settings_data.json` from my source and theme folders in my remote script.
+#### I have added `templates` and `settings_data.json` from my source and theme folders in my remote script.
 
 By doing this, I am able to keep the above considerations in check while now having a safe guard for production builds.
 
@@ -252,7 +252,7 @@ Since I'm only every adding new files and never overwriting the files inside the
 
 Minification doesn't matter here, since templates are almost always empty.
 
-### Why did I choose to put my source in it's own repo
+#### Why did I choose to put my source in it's own repo
 
 Two reasons really.
 
@@ -260,7 +260,7 @@ Two reasons really.
 
 2. Updating from a parent/template repo is easier via GitHub, or if I have errors, I can fix the errors in a separate project. Updating a submodule is as easy as pulling in the changes.
 
-### BUT what happens when when Shopify update the dawn repo?
+#### BUT what happens when when Shopify update the dawn repo?
 
 Since we've make a fork of the theme, we can simply sync the fork and pull in the new changes. However, we then have the issue of syncing our fork with the source repo we're using here. And this is slightly more difficult.
 
@@ -270,7 +270,7 @@ Using GitHub actions, specifically [actions-template-sync](https://github.com/ma
 
 > I'd welcome any guidance to setting this up properly.
 
-### Why use esbuild again if it didn't do what I wanted in the first place.
+#### Why use esbuild again if it didn't do what I wanted in the first place.
 
 Really, after spending a day and a half diving into esbuild to understand why it's used, I felt it was a better option out of the inbuilt options.
 
@@ -280,7 +280,7 @@ Even though the esbuild implementation is a separate instance of esbuild running
 
 Is the actual implementation jank? Absolutely. But it works and does what I need it to do. It doesn't produce as optimal scripts as a completely minified script, but it gets close enough without complaining.
 
-### Why am I using a bash script?
+#### Why am I using a bash script?
 
 I could have dove in and grabbed a plugin for esbuild or again with webpack. But KISS was in full force when I wanted this solution. So long as you know what you're doing, bash scripts can be useful for simple tasks.
 
