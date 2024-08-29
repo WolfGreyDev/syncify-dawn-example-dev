@@ -12,7 +12,8 @@
 		"dev": "syncify wolfgrey-syncify-dawn --theme dev --watch --hot",
 		"build": "syncify --build --prod --clean; node esbuild.mjs",
 		"upload": "syncify wolfgrey-syncify-dawn --theme dev --upload",
-		"download": "syncify wolfgrey-syncify-dawn --theme dev --download"
+		"download": "syncify wolfgrey-syncify-dawn --theme dev --download",
+		"remote": "pnpm build; bash remote.sh"
 	},
 	"syncify": {
 		"stores": {

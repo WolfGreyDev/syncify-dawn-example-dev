@@ -151,49 +151,116 @@ Given we know the problem now, the solution is simple, ensure `minifyIdentifiers
 
 ## Bonus Time!
 
-Coming next commit!
+So now we have our development environment and our source set up. How am I going to approach the production side of the project?
 
-## Design Considerations
+Syncify allows us to push to multiple themes (to multiple stores too) like a chad! I've run multiple stores on this workflow and it worked out *alright*. Nothing wrong with Syncify or anything like that, in the past, it's been rock solid for what I needed it for. 
 
-- I have intentionally left the `settings_data.json` out of my paths in my `package.json`.
+**The problem was the store owners.**
 
-    When I'm developing, the changes I make in the settings, I want to persist on the store when I do a new upload. If I were to upload a blank settings file or even the dawn default settings every time I do an upload, it makes testing new features extremely tedious.
+Let me explain. We normally have our dev environment which is labeled "DEV ENV - DO NOT TOUCH". And yet, somehow, this theme can end up published.
 
-- I have removed the `templates` value from my `package.json`.
+*Shocked Pikachu*, I know right.
 
-    Again this is a choice I make to ensure I don't upload an empty template and remove any settings I may have applied previously.
+But even if the store owner was to follow my instruction and only use the "Production Theme - Duplicate This One" theme, sometimes they just don't duplicate it. A small production push from my local to this theme and cue the phone call of why their theme templates are all empty and it's days of work down the drain.
 
-    This is a double edged sword though, as I cannot easily push new templates to the theme.  To combat this, since I create new templates rarely, I just manually create the template in the theme editor.
+So remembering what my old boss (who is not a nice guy btw) used to say
+> "Always account for the lowest denominator" - JC
 
-    When we did our first upload, we uploaded all the essential templates to get started so adding to them is very simple.
+I need a way to push a production theme to the client store, while not allowing the client to mess everything up.
 
-- Why did I choose to put my source in it's own repo
+### Shopify's GitHub Integration
 
-    Two reasons really.
+If you don't know what this is, it's a built in feature that allows stores to connect to github accounts to access repos containing a theme. This integration is 2 way as well so the store owner can backup their settings onto the repo.
 
-    1. I like to keep my source changes isolated and not tied to my development environment (or as little as possible).
+Importantly, we can push our production code to it. Let's set that up.
 
-    2. Updating from a parent/template repo is easier via GitHub, or if I have errors, I can fix the errors in a separate project. Updating a submodule is as easy as pulling in the changes.
+1. Create an empty private repo (for this example I'm making it public).
 
-- Why use esbuild again if it didn't do what I wanted in the first place.
+    **EXTREME DANGER: SEE NOTE**
 
-    Really, after spending a day and a half diving into esbuild to understand why it's used, I felt it was a better option out of the inbuilt options.
+    > When creating the new repo, be sure to name it in a way it will best suite your client (they don't need to see prod/dev/whatever). eg 'syncify-dawn-example'
 
-    I've tried a webpack approach where I'd copy the files and then ran a plugin to minimize it. Yeah it worked, but it felt clunky and detached from the build process.
+    > Make sure you include a readme during your setup as you won't be able to add the submodule if the repo is empty.
 
-    Even though the esbuild implementation is a separate instance of esbuild running right after Syncify's instance, it is virtually instant. This makes me *feel* like it's apart of the package.
+2. Using GitHub submodules, add a remote folder to your development environment using the url you can see in our new repo setup page. 
 
-    Is the actual implementation jank? Absolutely. But it works and does what I need it to do. It doesn't produce as optimal scripts as a completely minified script, but it gets close enough without complaining.
+    `git submodule add 'your-repo' 'remote-folder'`
 
-- Well what about code for production themes?
+    `git submodule add git@github.com:WolfGreyDev/syncify-dawn-example.git remote`
+    
+    > If you didn't do the previous step properly, the project will be borked with git references to empty folders. If this happens, consider cloning the project again from a prior time and retrying this integration again. Use `git clone --recurse-submodules`.
 
-    Stay tuned I guess. Next commit will have the answer.
+    > If retrying, you may need to open a fresh terminal instance and don't forget to `pnpm i`.
+
+3. We need to add a script to build our files to our remote submodule
+
+    1. Add a new file in the base directory called `remote.sh` and copy/paste the following gist to it's contents.
+
+        [remote.sh](https://gist.github.com/WolfGreyDev/4d3b991dd00aadd0e139b3d19dafff98)
+
+        > If you're good at bash scripting, feel free to make some suggestions on what should be added to this script to improve it. Coz its Raw AF.
+
+    2. Add a `remote` script into your `package.json`.
+
+        ```json
+        "remote": "pnpm build; bash remote.sh"
+        ```
+
+    3. Run a remote build.
+
+        `pnpm remote`
+
+        > Note ensure that your build is production ready with `pnpm build` first. Consider using a dev staging theme.
+
+4. If the remote theme looks correct, commit and push the theme to the remote repo.
+
+    > Initially, you'll need to stage and commit all the files for your theme, but this process will because easier to manage with smaller number of file after the first commit.
+
+5. Now you can connect your GitHub account with the Shopify store. See [Shopify Docs](https://shopify.dev/docs/storefronts/themes/tools/github) for more details.
+
+6. Once connected, you can select the repo and Shopify will now use this repo as the theme provider. Any updates you push to this repo will automatically update the production themes on the store.
+
+    Any changes the store owner makes will be automatically committed back on the repo as a source of truth.
+
+**And That's It! (for real this time)**
 
 ## Conclusion
 
 We've now set up Syncify, with all that juicy Syncify features, with Shopify's Dawn theme. I can now go start to make changes to our source code and know that when I build, it'll work (unless I screw something up).
 
-**BUT what happens when when Shopify update the dawn repo?**
+Now we're using submodules for both source and remote repos, maintaining all three repos is incredibly easy. And with the Native GitHub integration, it keeps me and the store owners happy since we're no longer stepping on each others toes.
+
+## Design Considerations
+
+### I have intentionally left the `settings_data.json` out of my paths in my `package.json`.
+
+When I'm developing, the changes I make in the settings, I want to persist on the store when I do a new upload. If I were to upload a blank settings file or even the dawn default settings every time I do an upload, it makes testing new features extremely tedious.
+
+### I have removed the `templates` value from my `package.json`.
+
+Again this is a choice I make to ensure I don't upload an empty template and remove any settings I may have applied previously.
+
+This is a double edged sword though, as I cannot easily push new templates to the theme.  To combat this, since I create new templates rarely, I just manually create the template in the theme editor.
+
+When we did our first upload, we uploaded all the essential templates to get started so adding to them is very simple.
+
+### I have added `templates` and `settings_data.json` from my source and theme folders in my remote script.
+
+By doing this, I am able to keep the above considerations in check while now having a safe guard for production builds.
+
+Since I'm only every adding new files and never overwriting the files inside the remote folder, the production theme will never lose data and never miss a new template since I also pull it from the source.
+
+Minification doesn't matter here, since templates are almost always empty.
+
+### Why did I choose to put my source in it's own repo
+
+Two reasons really.
+
+1. I like to keep my source changes isolated and not tied to my development environment (or as little as possible).
+
+2. Updating from a parent/template repo is easier via GitHub, or if I have errors, I can fix the errors in a separate project. Updating a submodule is as easy as pulling in the changes.
+
+### BUT what happens when when Shopify update the dawn repo?
 
 Since we've make a fork of the theme, we can simply sync the fork and pull in the new changes. However, we then have the issue of syncing our fork with the source repo we're using here. And this is slightly more difficult.
 
@@ -202,6 +269,20 @@ Using GitHub actions, specifically [actions-template-sync](https://github.com/ma
 > I have yet to get this working as I'm extremely unfamiliar with GitHub actions and seem to run into permission errors. However, I'm assured this is the way and simple to set up. Once I have a working template and instructions, I'll update this repo.
 
 > I'd welcome any guidance to setting this up properly.
+
+### Why use esbuild again if it didn't do what I wanted in the first place.
+
+Really, after spending a day and a half diving into esbuild to understand why it's used, I felt it was a better option out of the inbuilt options.
+
+I've tried a webpack approach where I'd copy the files and then ran a plugin to minimize it. Yeah it worked, but it felt clunky and detached from the build process.
+
+Even though the esbuild implementation is a separate instance of esbuild running right after Syncify's instance, it is virtually instant. This makes me *feel* like it's apart of the package.
+
+Is the actual implementation jank? Absolutely. But it works and does what I need it to do. It doesn't produce as optimal scripts as a completely minified script, but it gets close enough without complaining.
+
+### Why am I using a bash script?
+
+I could have dove in and grabbed a plugin for esbuild or again with webpack. But KISS was in full force when I wanted this solution. So long as you know what you're doing, bash scripts can be useful for simple tasks.
 
 ## Notes
 - I use the VSCode extension [Liquid](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid) and **you should too**. This repo is already set up for your project auto-completions and basic formatting (which you can change). You can customize these settings in the `.liquidrc` file.
