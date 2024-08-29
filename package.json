@@ -10,7 +10,7 @@
 	"homepage": "https://your-shopify-store.com",
 	"scripts": {
 		"dev": "syncify wolfgrey-syncify-dawn --theme dev --watch --hot",
-		"build": "syncify --build --prod --clean",
+		"build": "syncify --build --prod --clean; node esbuild.mjs",
 		"upload": "syncify wolfgrey-syncify-dawn --theme dev --upload",
 		"download": "syncify wolfgrey-syncify-dawn --theme dev --download"
 	},
@@ -33,7 +33,7 @@
 				"config": "config/settings_schema.json",
 				"locales": "locales/*.json",
 				"layout": "layout/*.liquid",
-				"templates": "templates/*",
+				"templates": "",
 				"customers": "templates/customers/*.json"
 			},
 			"views": {
@@ -70,6 +70,7 @@
 	},
 	"devDependencies": {
 		"@syncify/cli": "github:panoply/syncify#rc1",
+		"esbuild": "^0.23.1",
 		"svg-sprite": "^2.0.4",
 		"svgo": "^3.3.2"
 	}

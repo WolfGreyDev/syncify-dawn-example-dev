@@ -2,11 +2,18 @@
 	"engine": "shopify",
 	"files": {
 		"locales": "./theme/locales/en.default.json",
-		"sections": ["./theme/sections/*"],
+		"sections": [
+			"./theme/sections/*"
+		],
 		"settings": "./source/config/settings_schema.json",
-		"snippets": ["./theme/snippets/*"]
+		"snippets": [
+			"./theme/snippets/*"
+		]
 	},
 	"format": {
+		"ignore": [
+			"./source/**/*"
+		],
 		/*
 			Formatting and beautification is provided by Æsthetic.
 			https://aesthetic.js.org
