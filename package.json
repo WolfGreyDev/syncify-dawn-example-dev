@@ -1,24 +1,24 @@
 {
-	"name": "your-shopify-store-theme",
+	"name": "wolfgrey-syncify-dawn-theme",
 	"author": {
-		"name": "Foo Bar",
-		"email": "foo@example.com",
-		"url": "https://example.com"
+		"name": "Kim Skinner",
+		"email": "support@wolfgrey.dev",
+		"url": "https://wolfgrey.dev"
 	},
 	"version": "0.0.0",
-	"description": "Theme Description",
+	"description": "Syncify/Dawn Example Theme",
 	"homepage": "https://your-shopify-store.com",
 	"scripts": {
-		"dev": "syncify your-shopify-store --theme dev --watch --hot",
+		"dev": "syncify wolfgrey-syncify-dawn --theme dev --watch --hot",
 		"build": "syncify --build --prod --clean",
-		"upload": "syncify your-shopify-store --theme dev --upload",
-		"download": "syncify your-shopify-store --theme dev --download"
+		"upload": "syncify wolfgrey-syncify-dawn --theme dev --upload",
+		"download": "syncify wolfgrey-syncify-dawn --theme dev --download"
 	},
 	"syncify": {
 		"stores": {
-			"domain": "your-shopify-store",
+			"domain": "wolfgrey-syncify-dawn",
 			"themes": {
-				"dev": 1234567890
+				"dev": 165952553286
 			}
 		},
 		"clean": true,

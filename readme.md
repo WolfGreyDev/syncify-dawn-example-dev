@@ -1,37 +1,42 @@
 <!-- replace with your own-->
-# Syncify Skeleton
+# Syncify/Dawn Example
 
-This repo aims to provide a starting point for your next Shopify theme using [panoply/syncify](https://github.com/panoply/syncify/tree/rc1).
+This repo aims to provide an opinionated guide to using [Shopify/dawn](https://github.com/shopify/dawn) with [Syncify](https://github.com/panoply/syncify/tree/rc1). Additionally, I'll be showing off my current (08/2024) workflow.
 
 ## Why this is needed ##
 
-Syncify's development has gone through some changes on it's major branch. These changes have left some of the documentation outdated, in particular the initial setup stage. I've worked with [panoply](https://github.com/panoply) (Sissel) on the Shopify Developers Discord to get Syncify working using the "best" undocumented method.
+### Background ###
 
-## Installation
+A friend has asked me to make a couple of code changes on her Shopify website. Because she is new to the e-commerce game, she hasn't yet invested into her theme (tsk tsk, i know). She has asked for a feature to be built into her theme, nothing too difficult. However, she's using the Dawn theme, because it gets the job done for her needs. 
 
-> Be sure to check out the [official Syncify repo](https://github.com/panoply/syncify/tree/rc1) for more advanced uses.
+### The Problem ###
 
-> This repo uses a slightly modified version of the Dusk theme also created by panoply.
+Syncify doesn't support legacy javascript very well as it expects you to covert your scripts to modern practices. This however presents a problem when using Shopify's Dawn theme, as Shopify's javascript techniques do not play nicely with Syncify. During Syncify's build process, these scripts are transformed using [esbuild](https://esbuild.github.io/) and by the end of the build, the javascript output is a jumbled mess. As such, the theme will now spit out errors in the browser for almost every script.
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton. Set it to private if it's for a client. You can now clone your new repo to your local machine.
-2. Setup your Authorization. See the [official Syncify repo](https://github.com/panoply/syncify/tree/rc1) for instructions.
-    1. Create an app for your store with the appropriate scopes. [Instructions](https://github.com/panoply/syncify?tab=readme-ov-file#setup)
-    2. Rename the `.env.example` to `.env` then add your store name and API token to the appropriate places. [Instructions](https://github.com/panoply/syncify?tab=readme-ov-file#credentials)
-    3. In your `package.json`, replace all `your-shopify-store` references with the Shopify store name you set in your `.env` file.
-3. Run `pnpm i` to quick install Syncify dependencies. Below is an itemized list.
-    * `pnpm add github:panoply/syncify#rc1 -D` to install the rc1 branch.
-    * (Optional) `pnpm add svgo -D` and `pnpm add svg-sprite -D` to handle SVG's, the logo in this case.
-4. Run `pnpm build`. This will create a new directory called `theme` in the standard Shopify theme structure.
-5. Package the `theme` folder and manually upload the `.zip` file to your store.
-    * On Mac, navigate to the project folder, right click on the `theme` folder and select `compress "theme"`.
-    > Syncify can export the output directory and zip it with the `-p` or `--package` flags, but this functionality isn't working yet.
-6. Add the theme ID to your `package.json` under `stores.themes.dev`.
-    > To get your theme id, customize the theme via the Shopify Theme Editor and copy the theme ID, located in the address bar.
-7. Run `pnpm dev` to start your first live reloading session and open the preview link provided in your terminal. Make a change to your `/source/layout/theme.liquid` and confirm you see your change in your browser.
+Syncify recommends that we whip these javascript files into shape, but who's got time for that. I just want to make a few quick changes on my friends theme, not rewrite javascript just to get the same result on the live theme.
+
+Syncify offers ways to intercept the esbuild config, and this somewhat works. When in the dev environment, we can hot reload the script and provided this script doesn't call functions from other (broken) scripts, everything is good. However, once you build a production version of the theme, well esbuild is going to optimize the files and break everything again. 
+
+See the problem with the `minify: true` or `--minify` parameter, it actually does 3 actions.
+
+> This option does three separate things in combination: it removes whitespace, it rewrites your syntax to be more compact, and it renames local variables to be shorter. Usually you want to do all of these things, but these options can also be enabled individually if necessary
+[esbuild documentation](https://esbuild.github.io/api/#minify)
+
+These 3 functions are fine in normal circumstances, but in our case. When removing the local variables, we're breaking the cross-script functions that Shopify uses for the Dawn theme.
+
+### The Solution ###
+
+Given we know the problem now, the solution is simple, ensure `minifyIdentifiers: false` or `--minifyIdentifiers:false` is set for our build process. We still want to enable the other options, but this particular option is what is messing with our code. So let's fix that.
+
+## Installation ##
+
+1. Use the [WolfGreyDev/syncify-skeleton](https://github.com/WolfGreyDev/syncify-skeleton) template to create a new developer environment repository. Follow the instructions on how to install.
+
+    > When creating a new repo, be sure to name it in a way you can differentiate it as the development environment. eg 'syncify-dawn-example-dev'
+
+    > Following the instructions on the skeleton repo will test if your connection is working with your store.
 
 ### Notes
-- If you're having issues connecting to your theme, ensure that you've followed the Setup and Credential steps outlined in the [official Syncify repo](https://github.com/panoply/syncify?tab=readme-ov-file#setup). Then check your `.env` file and finally your `package.json` file to make sure everything matches.
-- If you're using `pnpm dev` and you're unable to hot reload, try changing browsers or disable any browser functionality that may be blocking your websocket connection (eg. Brave Shield). As a last resort, restart your machine, this has worked for me in the past.
 - I use the VSCode extension [Liquid](https://marketplace.visualstudio.com/items?itemName=sissel.shopify-liquid) and **you should too**. This repo is already set up for your project auto-completions and basic formatting (which you can change). You can customize these settings in the `.liquidrc` file.
 - If you're still having issues, head over to the [Shopify Developers Discord](https://discord.gg/bU3P5TPE) where we have a dedicated channel for Syncify stuff. **Don't be dumb! Complete the application form properly otherwise you'll be banned instantly.**
 
